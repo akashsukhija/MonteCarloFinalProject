@@ -6,7 +6,7 @@ random.seed(10)
 
 
 def add_routes(d):
-    car_stat = {"no_of_cars": 1000, "alcohol": 50}
+    car_stat = {"no_of_cars": 1000, "alcohol": 0}
     random.seed(10)
     counties = ['Adams', 'Alexander', 'Bond', 'Boone', 'Brown', 'Bureau', 'Calhoun', 'Carroll', 'Cass', 'Champaign',
                 'Christian', 'Clark', 'Clay', 'Clinton', 'Coles', 'Cook', 'Crawford', 'Cumberland', 'DeKalb', 'De Witt',
@@ -57,7 +57,7 @@ def initializemap():
   return d
 
 def accidents_per_edge(edgestat):
-  return (np.random.binomial(edgestat['alcohol'],0.13)+np.random.binomial(edgestat['no_of_cars']-edgestat['alcohol'],0.1))
+  return (np.random.binomial(edgestat['alcohol'],0.03)+np.random.binomial(edgestat['no_of_cars']-edgestat['alcohol'],0.27))
 
 def accidents_per_roadtype(d):
   cumulative_stat = {'State': 0,'InterState': 0 , 'City': 0}
