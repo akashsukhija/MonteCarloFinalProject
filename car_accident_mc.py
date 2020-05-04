@@ -12,7 +12,7 @@ def create_map(d, hypothesis):
         h_multiplier = 100
     elif hypothesis == "distraction":
         h_multiplier = 150
-    elif hypothesis == "neutral":
+    elif hypothesis == "autonomous":
         h_multiplier = 0
     d = add_routes(d,h_multiplier)
     return d
@@ -34,7 +34,7 @@ def add_routes(d,h_multiplier):
                 'Scott', 'Shelby', 'St. Clair', 'Stark', 'Stephenson', 'Tazewell', 'Union', 'Vermilion', 'Wabash',
                 'Warren', 'Washington', 'Wayne', 'White', 'Whiteside', 'Will',
                 'Williamson', 'Winnebago', 'Woodford']
-    counties = counties[:36]
+    counties = counties[:42]
     for i in range(1, len(counties)):
         distance = random.uniform(15, 25)
         if h_multiplier == 0:
@@ -50,6 +50,7 @@ def add_routes(d,h_multiplier):
         state_car_stat = {"h_param": random.randint(0, h_multiplier), "no_of_cars": random.randint(1000, 2500)}
     d.add_edge(counties[0], counties[i], weight=distance, type="State", car_stat=state_car_stat)
     d.add_edge(counties[i], counties[0], weight=distance, type="State", car_stat=state_car_stat)
+
     # InterState Roads
     for i in range(1, 10):
         distance = random.uniform(75, 100)
@@ -136,14 +137,20 @@ if __name__ == "__main__":
         else:
             edge_color.append("blue")
     nx.draw(d, pos=my_pos, with_labels=True, node_color='red', node_size=400, edge_color=edge_color, linewidths=1, font_size=15)
-    # plt.show()
-    print("Accidents on State,Interstate and City due to alcohol")
+    plt.show()
+    print("Accidents on State,Interstate and City due to Alcohol")
     d = initializemap("alcohol")
-    accidents_per_roadtype(d,"alcohol")
-    print("Accidents on State,Interstate and City due to distraction")
+    accidents_per_roadtype(d, "alcohol")
+    # p = nx.get_edge_attributes(d,"car_stat")
+    # print (p)
+    print("Accidents on State,Interstate and City due to Distraction")
     d = initializemap("distraction")
-    accidents_per_roadtype(d,"distraction")
-    print("Accidents on State,Interstate and City due to neutral")
-    d = initializemap("neutral")
-    accidents_per_roadtype(d,"neutral")
+    accidents_per_roadtype(d, "distraction")
+    # q = nx.get_edge_attributes(d,"car_stat")
+    # print (q)
+    print("Accidents on State,Interstate and City due to Neutral")
+    d = initializemap("autonomous")
+    accidents_per_roadtype(d, "Autonomous")
+    # r = nx.get_edge_attributes(d,"car_stat")
+    # print (r)
 
