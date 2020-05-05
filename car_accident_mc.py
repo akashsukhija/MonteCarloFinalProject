@@ -134,74 +134,35 @@ def route_display(d):
             font_size=15)
     plt.show()
 
+def run_experiment(hypothesis):
+    data = {}
+    df_final = pd.DataFrame(columns=['State', 'InterState', 'City'])
 
-# Main Function
-if __name__ == "__main__":
-    i = 0
-    j = 0
-    k = 0
-    data1 = {}
-    data2 = {}
-    data3 = {}
-    df_final1 = pd.DataFrame(columns=['State', 'InterState', 'City'])
-    df_final2 = pd.DataFrame(columns=['State', 'InterState', 'City'])
-    df_final3 = pd.DataFrame(columns=['State', 'InterState', 'City'])
-    # d = initializemap("alcohol")
+    for i in range(365):
+        d = initializemap(hypothesis)
+        data = accidents_per_roadtype(d, hypothesis)
+        df = pd.DataFrame([data], columns=data.keys())
+        df_final = pd.concat([df_final, df])
 
-    print("Accidents on State,Interstate and City due to Alcohol:")
-
-    while i <= 364:
-        d = initializemap("alcohol")
-        data1 = accidents_per_roadtype(d, "alcohol")
-        df = pd.DataFrame([data1], columns=data1.keys())
-        df_final1 = pd.concat([df_final1, df])
-        i = i + 1
-
-
-    alcohol_stats = df_final1.agg({'State': ['min', 'max', 'median', 'mean'], 'InterState': ['min', 'max', 'median', 'mean'],
-                   'City': ['min', 'max', 'median', 'mean']})
-
-    print(df_final1)
-    print(alcohol_stats)
-    df_final1.iloc[0:0]
-
-
-    route_display(d)
-    # p = nx.get_edge_attributes(d,"car_stat")
-    # print (p)
-    print("Accidents on State,Interstate and City due to Distraction")
-
-    while j <= 364:
-        d = initializemap("distraction")
-        data2 = accidents_per_roadtype(d, "distraction")
-        df = pd.DataFrame([data2], columns=data2.keys())
-        df_final2 = pd.concat([df_final2, df])
-        j = j + 1
-    distraction_stats = df_final2.agg({'State': ['min', 'max', 'median', 'mean'], 'InterState': ['min', 'max', 'median', 'mean'],
-         'City': ['min', 'max', 'median', 'mean']})
-
-    print(df_final2)
-    print(distraction_stats)
-    route_display(d)
-    df_final2.iloc[0:0]
-
-    # q = nx.get_edge_attributes(d,"car_stat")
-    # print (q)
-    print("Accidents on State,Interstate and City due to Autonomous")
-    while k <= 364:
-        d = initializemap("autonomous")
-        data3 = accidents_per_roadtype(d, "autonomous")
-        df = pd.DataFrame([data3], columns=data3.keys())
-        df_final3 = pd.concat([df_final3, df])
-        k = k + 1
-    autonomous_stats = df_final3.agg(
+    alcohol_stats = df_final.agg(
         {'State': ['min', 'max', 'median', 'mean'], 'InterState': ['min', 'max', 'median', 'mean'],
          'City': ['min', 'max', 'median', 'mean']})
 
-    print(df_final3)
-    print(autonomous_stats)
+    df_final['Total'] = df_final['State'] + df_final['InterState'] + df_final['City']
+    print(df_final)
+    print(alcohol_stats)
+    df_final.iloc[0:0]
     route_display(d)
-    df_final3.iloc[0:0]
-    # r = nx.get_edge_attributes(d,"car_stat")
-    # print (r)
+
+
+# Main Function
+if __name__ == "__main__":
+    print("Accidents on State,Interstate and City due to Alcohol:")
+    run_experiment("alcohol")
+
+    print("Accidents on State,Interstate and City due to Distraction")
+    run_experiment("distraction")
+
+    print("Accidents on State,Interstate and City due to Autonomous")
+    run_experiment("autonomous")
 
