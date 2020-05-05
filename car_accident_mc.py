@@ -2,6 +2,7 @@ import random
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+import pandas as pd
 random.seed(10)
 
 
@@ -115,12 +116,10 @@ def accidents_per_roadtype(d,hypothesis):
       cumulative_stat['InterState'] += accidents_per_edge((list(d.edges(data=True))[i])[2]['car_stat'],hypothesis)
     else:
       cumulative_stat['City'] += accidents_per_edge((list(d.edges(data=True))[i])[2]['car_stat'],hypothesis)
-  print(cumulative_stat)
+  return(cumulative_stat)
 
 
-#Main Function
-if __name__ == "__main__":
-    d = initializemap("alcohol")
+def route_display(d):
     my_pos = nx.spring_layout(d, seed=50)
     edge_color = []
     mapdict = (nx.get_edge_attributes(d, "type"))
@@ -131,22 +130,69 @@ if __name__ == "__main__":
             edge_color.append("orange")
         else:
             edge_color.append("blue")
-    nx.draw(d, pos=my_pos, with_labels=True, node_color='red', node_size=400, edge_color=edge_color, linewidths=1, font_size=15)
+    nx.draw(d, pos=my_pos, with_labels=True, node_color='red', node_size=400, edge_color=edge_color, linewidths=1,
+            font_size=15)
     plt.show()
+
+
+# Main Function
+if __name__ == "__main__":
+    i = 0
+    j = 0
+    k = 0
+    data1 = {}
+    data2 = {}
+    data3 = {}
+    df_final1 = pd.DataFrame(columns=['State', 'InterState', 'City'])
+    df_final2 = pd.DataFrame(columns=['State', 'InterState', 'City'])
+    df_final3 = pd.DataFrame(columns=['State', 'InterState', 'City'])
+    # d = initializemap("alcohol")
+
     print("Accidents on State,Interstate and City due to Alcohol")
-    d = initializemap("alcohol")
-    data1 = accidents_per_roadtype(d, "alcohol")
+
+    while i <= 999:
+        d = initializemap("alcohol")
+        data1 = accidents_per_roadtype(d, "alcohol")
+        df = pd.DataFrame([data1], columns=data1.keys())
+        df_final1 = pd.concat([df_final1, df])
+        i = i + 1
+    df_final1.agg({'State': ['min', 'max', 'median', 'skew'], 'InterState': ['min', 'max', 'median', 'mean'],
+                   'City': ['min', 'max', 'median', 'mean']})
+    df_final1.iloc[0:0]
+    print(df_final1)
+
+    route_display(d)
     # p = nx.get_edge_attributes(d,"car_stat")
     # print (p)
     print("Accidents on State,Interstate and City due to Distraction")
-    d = initializemap("distraction")
-    accidents_per_roadtype(d, "distraction")
+
+    while j <= 999:
+        d = initializemap("distraction")
+        data2 = accidents_per_roadtype(d, "distraction")
+        df = pd.DataFrame([data2], columns=data2.keys())
+        df_final2 = pd.concat([df_final2, df])
+        j = j + 1
+    df_final2.agg({'State': ['min', 'max', 'median', 'skew'], 'InterState': ['min', 'max', 'median', 'mean'],
+                   'City': ['min', 'max', 'median', 'mean']})
+    df_final2.iloc[0:0]
+    print(df_final2)
+    route_display(d)
+
     # q = nx.get_edge_attributes(d,"car_stat")
     # print (q)
-    print("Accidents on State,Interstate and City due to autonomous")
-    d = initializemap("autonomous")
-    accidents_per_roadtype(d, "Autonomous")
+    print("Accidents on State,Interstate and City due to Autonomous")
+    while k <= 999:
+        d = initializemap("autonomous")
+        data3 = accidents_per_roadtype(d, "Autonomous")
+        df = pd.DataFrame([data3], columns=data3.keys())
+        df_final3 = pd.concat([df_final3, df])
+        k = k + 1
+    df_final3.agg({'State': ['min', 'max', 'median', 'skew'], 'InterState': ['min', 'max', 'median', 'mean'],
+                   'City': ['min', 'max', 'median', 'mean']})
+    df_final3.iloc[0:0]
+    print(df_final3)
+    route_display(d)
+
     # r = nx.get_edge_attributes(d,"car_stat")
     # print (r)
-
 
