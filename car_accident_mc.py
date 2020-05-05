@@ -152,17 +152,27 @@ def run_experiment(hypothesis):
     print(df_final)
     print(alcohol_stats)
     df_final.iloc[0:0]
-    route_display(d)
+    #route_display(d)
+    return list(df_final['Total'])
 
 
 # Main Function
 if __name__ == "__main__":
+    no_of_days = list(range(1,366))
     print("Accidents on State,Interstate and City due to Alcohol:")
-    run_experiment("alcohol")
+    alcohol = run_experiment("alcohol")
 
     print("Accidents on State,Interstate and City due to Distraction")
-    run_experiment("distraction")
+    distraction = run_experiment("distraction")
 
     print("Accidents on State,Interstate and City due to Autonomous")
-    run_experiment("autonomous")
+    autonomous = run_experiment("autonomous")
+
+    plt.plot(no_of_days,alcohol, label = "Alcohol")
+    plt.plot(no_of_days, distraction,label = "Distraction")
+    plt.plot(no_of_days, autonomous , label = "Autonomous")
+    plt.xlabel("Days")
+    plt.ylabel("Accidents")
+    plt.legend()
+    plt.show()
 
