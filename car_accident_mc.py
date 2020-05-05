@@ -10,9 +10,9 @@ def create_map(d, hypothesis):
     # car_stat = {"no_of_cars" : 1000, "h_param": 50}
     # State Roads
     if hypothesis == "alcohol":
-        h_multiplier = 100
+        h_multiplier = 10
     elif hypothesis == "distraction":
-        h_multiplier = 150
+        h_multiplier = 15
     elif hypothesis == "autonomous":
         h_multiplier = 0
     d = add_routes(d,h_multiplier)
@@ -21,17 +21,17 @@ def create_map(d, hypothesis):
 def calculate_traffic(h_multiplier, roadtype):
     car_stat = {}
     if h_multiplier == 0 and roadtype == "State":
-        car_stat = {"h_param": 0,"autonomous":random.randint(100, 250), "no_of_cars": random.randint(1000, 2500)}
+        car_stat = {"h_param": 0,"autonomous":random.randint(10, 25), "no_of_cars": random.randint(100, 250)}
     elif roadtype == "State":
-        car_stat = {"h_param": random.randint(0, h_multiplier),"autonomous":random.randint(100, 250), "no_of_cars": random.randint(1000, 2500)}
+        car_stat = {"h_param": random.randint(0, h_multiplier),"autonomous":random.randint(10, 25), "no_of_cars": random.randint(100, 250)}
     elif h_multiplier == 0 and roadtype == "InterState":
-        car_stat = {"h_param": 0, "autonomous":random.randint(100, 250), "no_of_cars": random.randint(1500, 5000)}
+        car_stat = {"h_param": 0, "autonomous":random.randint(10, 25), "no_of_cars": random.randint(150, 500)}
     elif roadtype == "InterState":
-        car_stat = {"h_param": random.randint(h_multiplier - 50, h_multiplier * 3), "autonomous":random.randint(100, 250), "no_of_cars": random.randint(1500, 5000)}
+        car_stat = {"h_param": random.randint(h_multiplier - 5, h_multiplier * 3), "autonomous":random.randint(10, 25), "no_of_cars": random.randint(150, 500)}
     elif h_multiplier == 0 and roadtype == "City":
-        car_stat = {"h_param": 0, "autonomous":random.randint(100, 250), "no_of_cars": random.randint(500, 2000)}
+        car_stat = {"h_param": 0, "autonomous":random.randint(10, 25), "no_of_cars": random.randint(50, 200)}
     else:
-        car_stat = {"h_param": random.randint(0, h_multiplier - 50), "autonomous":random.randint(100, 250), "no_of_cars": random.randint(500, 2000)}
+        car_stat = {"h_param": random.randint(0, h_multiplier - 5), "autonomous":random.randint(10, 25), "no_of_cars": random.randint(50, 200)}
     return car_stat
 
 def add_routes(d,h_multiplier):
@@ -148,51 +148,60 @@ if __name__ == "__main__":
     df_final3 = pd.DataFrame(columns=['State', 'InterState', 'City'])
     # d = initializemap("alcohol")
 
-    print("Accidents on State,Interstate and City due to Alcohol")
+    print("Accidents on State,Interstate and City due to Alcohol:")
 
-    while i <= 999:
+    while i <= 364:
         d = initializemap("alcohol")
         data1 = accidents_per_roadtype(d, "alcohol")
         df = pd.DataFrame([data1], columns=data1.keys())
         df_final1 = pd.concat([df_final1, df])
         i = i + 1
-    df_final1.agg({'State': ['min', 'max', 'median', 'skew'], 'InterState': ['min', 'max', 'median', 'mean'],
+
+
+    alcohol_stats = df_final1.agg({'State': ['min', 'max', 'median', 'mean'], 'InterState': ['min', 'max', 'median', 'mean'],
                    'City': ['min', 'max', 'median', 'mean']})
-    df_final1.iloc[0:0]
+
     print(df_final1)
+    print(alcohol_stats)
+    df_final1.iloc[0:0]
+
 
     route_display(d)
     # p = nx.get_edge_attributes(d,"car_stat")
     # print (p)
     print("Accidents on State,Interstate and City due to Distraction")
 
-    while j <= 999:
+    while j <= 364:
         d = initializemap("distraction")
         data2 = accidents_per_roadtype(d, "distraction")
         df = pd.DataFrame([data2], columns=data2.keys())
         df_final2 = pd.concat([df_final2, df])
         j = j + 1
-    df_final2.agg({'State': ['min', 'max', 'median', 'skew'], 'InterState': ['min', 'max', 'median', 'mean'],
-                   'City': ['min', 'max', 'median', 'mean']})
-    df_final2.iloc[0:0]
+    distraction_stats = df_final2.agg({'State': ['min', 'max', 'median', 'mean'], 'InterState': ['min', 'max', 'median', 'mean'],
+         'City': ['min', 'max', 'median', 'mean']})
+
     print(df_final2)
+    print(distraction_stats)
     route_display(d)
+    df_final2.iloc[0:0]
 
     # q = nx.get_edge_attributes(d,"car_stat")
     # print (q)
     print("Accidents on State,Interstate and City due to Autonomous")
-    while k <= 999:
+    while k <= 364:
         d = initializemap("autonomous")
-        data3 = accidents_per_roadtype(d, "Autonomous")
+        data3 = accidents_per_roadtype(d, "autonomous")
         df = pd.DataFrame([data3], columns=data3.keys())
         df_final3 = pd.concat([df_final3, df])
         k = k + 1
-    df_final3.agg({'State': ['min', 'max', 'median', 'skew'], 'InterState': ['min', 'max', 'median', 'mean'],
-                   'City': ['min', 'max', 'median', 'mean']})
-    df_final3.iloc[0:0]
-    print(df_final3)
-    route_display(d)
+    autonomous_stats = df_final3.agg(
+        {'State': ['min', 'max', 'median', 'mean'], 'InterState': ['min', 'max', 'median', 'mean'],
+         'City': ['min', 'max', 'median', 'mean']})
 
+    print(df_final3)
+    print(autonomous_stats)
+    route_display(d)
+    df_final3.iloc[0:0]
     # r = nx.get_edge_attributes(d,"car_stat")
     # print (r)
 
