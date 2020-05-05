@@ -88,14 +88,13 @@ def add_routes(d,h_multiplier):
     return d
 
 
-# First Function
 def initializemap(hypothesis):
   d = nx.DiGraph()
   #d = add_counties(d)
   d = create_map(d,hypothesis)
   return d
 
-#Fifth Function
+
 def accidents_per_edge(edgestat,hypothesis):
     if hypothesis == "alcohol":
         return (np.random.binomial(edgestat[next(iter(edgestat))], 0.033) + np.random.binomial(edgestat['autonomous'],0.02) + np.random.binomial(edgestat['no_of_cars'] - edgestat['autonomous'] - edgestat[next(iter(edgestat))], 0.03))
@@ -107,7 +106,6 @@ def accidents_per_edge(edgestat,hypothesis):
 #Assumption: If there are 100 vehicles, 10 collisions happen then out of those 10 collisions, 3 are due to alchohol
 #and 7 due to other causes
 
-#Fourth Function
 def accidents_per_roadtype(d,hypothesis):
   cumulative_stat = {'State': 0,'InterState': 0 , 'City': 0}
   for i in range(0,len(d.edges(data=True))):
