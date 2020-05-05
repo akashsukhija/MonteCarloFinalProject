@@ -17,6 +17,22 @@ def create_map(d, hypothesis):
     d = add_routes(d,h_multiplier)
     return d
 
+def calculate_traffic(h_multiplier, roadtype):
+    car_stat = {}
+    if h_multiplier == 0 and roadtype == "State":
+        car_stat = {"h_param": 0,"autonomous":random.randint(100, 250), "no_of_cars": random.randint(1000, 2500)}
+    elif roadtype == "State":
+        car_stat = {"h_param": random.randint(0, h_multiplier),"autonomous":random.randint(100, 250), "no_of_cars": random.randint(1000, 2500)}
+    elif h_multiplier == 0 and roadtype == "InterState":
+        car_stat = {"h_param": 0, "autonomous":random.randint(100, 250), "no_of_cars": random.randint(1500, 5000)}
+    elif roadtype == "InterState":
+        car_stat = {"h_param": random.randint(h_multiplier - 50, h_multiplier * 3), "autonomous":random.randint(100, 250), "no_of_cars": random.randint(1500, 5000)}
+    elif h_multiplier == 0 and roadtype == "City":
+        car_stat = {"h_param": 0, "autonomous":random.randint(100, 250), "no_of_cars": random.randint(500, 2000)}
+    else:
+        car_stat = {"h_param": random.randint(0, h_multiplier - 50), "autonomous":random.randint(100, 250), "no_of_cars": random.randint(500, 2000)}
+    return car_stat
+
 def add_routes(d,h_multiplier):
     random.seed(10)
     counties = ['Adams', 'Alexander', 'Bond', 'Boone', 'Brown', 'Bureau', 'Calhoun', 'Carroll', 'Cass', 'Champaign',
@@ -36,59 +52,40 @@ def add_routes(d,h_multiplier):
                 'Williamson', 'Winnebago', 'Woodford']
     counties = counties[:42]
     for i in range(1, len(counties)):
+        car_stat = calculate_traffic(h_multiplier,"State")
         distance = random.uniform(15, 25)
-        if h_multiplier == 0:
-            state_car_stat = {"h_param": 0, "no_of_cars": random.randint(1000, 2500)}
-        else:
-            state_car_stat = {"h_param": random.randint(0, h_multiplier), "no_of_cars": random.randint(1000, 2500)}
-        d.add_edge(counties[i], counties[i - 1], weight=distance, type="State", car_stat=state_car_stat)
-        d.add_edge(counties[i - 1], counties[i], weight=distance, type="State", car_stat=state_car_stat)
+        d.add_edge(counties[i], counties[i - 1], weight=distance, type="State", car_stat=car_stat)
+        d.add_edge(counties[i - 1], counties[i], weight=distance, type="State", car_stat=car_stat)
     distance = random.uniform(15, 25)
-    if h_multiplier == 0:
-        state_car_stat = {"h_param": 0, "no_of_cars": random.randint(1000, 2500)}
-    else:
-        state_car_stat = {"h_param": random.randint(0, h_multiplier), "no_of_cars": random.randint(1000, 2500)}
-    d.add_edge(counties[0], counties[i], weight=distance, type="State", car_stat=state_car_stat)
-    d.add_edge(counties[i], counties[0], weight=distance, type="State", car_stat=state_car_stat)
+    car_stat = calculate_traffic(h_multiplier,"State")
+    d.add_edge(counties[0], counties[i], weight=distance, type="State", car_stat=car_stat)
+    d.add_edge(counties[i], counties[0], weight=distance, type="State", car_stat=car_stat)
 
     # InterState Roads
     for i in range(1, 10):
         distance = random.uniform(75, 100)
-        if h_multiplier == 0:
-            interstate_car_stat = {"h_param": 0,"no_of_cars": random.randint(1500, 5000)}
-        else:
-            interstate_car_stat = {"h_param": random.randint(h_multiplier - 50, h_multiplier * 3), "no_of_cars": random.randint(1500, 5000)}
-        d.add_edge(counties[i * 3], counties[i * 3 - 3], weight=distance, type="InterState",car_stat=interstate_car_stat)
-        d.add_edge(counties[(i * 3) - 3], counties[(i * 3)], weight=distance, type="InterState",car_stat=interstate_car_stat)
+        car_stat = calculate_traffic(h_multiplier, "InterState")
+        d.add_edge(counties[i * 3], counties[i * 3 - 3], weight=distance, type="InterState",car_stat=car_stat)
+        d.add_edge(counties[(i * 3) - 3], counties[(i * 3)], weight=distance, type="InterState",car_stat=car_stat)
 
     for i in range(1, 9):
         distance = random.uniform(100, 125)
-        if h_multiplier == 0:
-            interstate_car_stat = {"h_param": 0, "no_of_cars": random.randint(1500, 5000)}
-        else:
-            interstate_car_stat = {"h_param": random.randint(h_multiplier - 50, h_multiplier * 3), "no_of_cars": random.randint(1500, 5000)}
-        d.add_edge(counties[i * 4], counties[(i * 4) - 4], weight=distance, type="InterState", car_stat=interstate_car_stat)
-        d.add_edge(counties[(i * 4) - 4], counties[(i * 4)], weight=distance, type="InterState", car_stat=interstate_car_stat)
+        car_stat = calculate_traffic(h_multiplier, "InterState")
+        d.add_edge(counties[i * 4], counties[(i * 4) - 4], weight=distance, type="InterState", car_stat=car_stat)
+        d.add_edge(counties[(i * 4) - 4], counties[(i * 4)], weight=distance, type="InterState", car_stat=car_stat)
 
     # City Roads
     for i in range(1, 7):
         distance = random.uniform(100, 125)
-        if h_multiplier == 0:
-            city_car_stat = {"h_param": 0, "no_of_cars": random.randint(500, 2000)}
-        else:
-            city_car_stat = {"h_param": random.randint(0, h_multiplier - 50), "no_of_cars": random.randint(500, 2000)}
-        d.add_edge(counties[i * 5], counties[(i * 5) - 5 - i], weight=distance, type="city", car_stat=city_car_stat)
-        d.add_edge(counties[(i * 5) - 5 - i], counties[(i * 5)], weight=distance, type="city", car_stat=city_car_stat)
+        car_stat = calculate_traffic(h_multiplier, "City")
+        d.add_edge(counties[i * 5], counties[(i * 5) - 5 - i], weight=distance, type="city", car_stat=car_stat)
+        d.add_edge(counties[(i * 5) - 5 - i], counties[(i * 5)], weight=distance, type="city", car_stat=car_stat)
     for i in range(1, 6):
         distance = random.uniform(150, 175)
-        if h_multiplier == 0:
-            city_car_stat = {"h_param": 0, "no_of_cars": random.randint(500, 2000)}
-        else:
-            city_car_stat = {"h_param": random.randint(0, h_multiplier - 50), "no_of_cars": random.randint(500, 2000)}
-        d.add_edge(counties[i * 6], counties[(i * 6) - 6 - i], weight=distance, type="city", car_stat=city_car_stat)
-        d.add_edge(counties[(i * 6) - 6 - i], counties[(i * 6)], weight=distance, type="city", car_stat=city_car_stat)
+        car_stat = calculate_traffic(h_multiplier, "City")
+        d.add_edge(counties[i * 6], counties[(i * 6) - 6 - i], weight=distance, type="city", car_stat=car_stat)
+        d.add_edge(counties[(i * 6) - 6 - i], counties[(i * 6)], weight=distance, type="city", car_stat=car_stat)
     return d
-
 
 
 # First Function
@@ -101,11 +98,11 @@ def initializemap(hypothesis):
 #Fifth Function
 def accidents_per_edge(edgestat,hypothesis):
     if hypothesis == "alcohol":
-        return (np.random.binomial(edgestat[next(iter(edgestat))], 0.033) + np.random.binomial(edgestat['no_of_cars'] - edgestat[next(iter(edgestat))], 0.03))
+        return (np.random.binomial(edgestat[next(iter(edgestat))], 0.033) + np.random.binomial(edgestat['autonomous'],0.02) + np.random.binomial(edgestat['no_of_cars'] - edgestat['autonomous'] - edgestat[next(iter(edgestat))], 0.03))
     elif hypothesis == "distraction":
-        return (np.random.binomial(edgestat[next(iter(edgestat))], 0.0324) + np.random.binomial(edgestat['no_of_cars'] - edgestat[next(iter(edgestat))], 0.03))
+        return (np.random.binomial(edgestat[next(iter(edgestat))], 0.0324) + np.random.binomial(edgestat['autonomous'],0.02) + np.random.binomial(edgestat['no_of_cars'] - edgestat['autonomous'] - edgestat[next(iter(edgestat))], 0.03))
     else:
-        return (np.random.binomial(0, 0.1) + np.random.binomial(edgestat['no_of_cars'], 0.03))
+        return (np.random.binomial(edgestat['autonomous'],0.02) + np.random.binomial(edgestat['no_of_cars'] - edgestat['autonomous'], 0.03))
 
 #Assumption: If there are 100 vehicles, 10 collisions happen then out of those 10 collisions, 3 are due to alchohol
 #and 7 due to other causes
@@ -140,7 +137,7 @@ if __name__ == "__main__":
     plt.show()
     print("Accidents on State,Interstate and City due to Alcohol")
     d = initializemap("alcohol")
-    accidents_per_roadtype(d, "alcohol")
+    data1 = accidents_per_roadtype(d, "alcohol")
     # p = nx.get_edge_attributes(d,"car_stat")
     # print (p)
     print("Accidents on State,Interstate and City due to Distraction")
@@ -148,9 +145,10 @@ if __name__ == "__main__":
     accidents_per_roadtype(d, "distraction")
     # q = nx.get_edge_attributes(d,"car_stat")
     # print (q)
-    print("Accidents on State,Interstate and City due to Neutral")
+    print("Accidents on State,Interstate and City due to autonomous")
     d = initializemap("autonomous")
     accidents_per_roadtype(d, "Autonomous")
     # r = nx.get_edge_attributes(d,"car_stat")
     # print (r)
+
 
